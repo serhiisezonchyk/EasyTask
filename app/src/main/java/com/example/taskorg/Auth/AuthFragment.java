@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.taskorg.MainActivity;
 import com.example.taskorg.R;
 import com.example.taskorg.SplashActivity;
 import com.google.firebase.auth.FirebaseAuth;

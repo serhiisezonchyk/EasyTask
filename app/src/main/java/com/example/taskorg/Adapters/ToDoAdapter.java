@@ -16,6 +16,7 @@ import com.example.taskorg.AddNewTask;
 import com.example.taskorg.MainActivity;
 import com.example.taskorg.Model.TaskModel;
 import com.example.taskorg.R;
+import com.example.taskorg.Vars.GlobalVar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -36,7 +37,13 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.each_task , parent , false);
+        View view;
+
+        if(GlobalVar.listState == false)
+            view = LayoutInflater.from(activity).inflate(R.layout.each_task_card , parent , false);
+        else
+            view = LayoutInflater.from(activity).inflate(R.layout.each_task, parent , false);
+
         firestore = FirebaseFirestore.getInstance();
         return new MyViewHolder(view);
     }
@@ -58,7 +65,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         bundle.putString("deadline_date" , model.getDeadline_date());
         bundle.putString("id" , model.TaskId);
 
-        AddNewTask addNewTask = new AddNewTask();
+        AddNewTask addNewTask = new AddNewTask(this);
         addNewTask.setArguments(bundle);
         addNewTask.show(activity.getSupportFragmentManager() , addNewTask.getTag());
     }

@@ -16,7 +16,7 @@ public class AuthActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             AuthFragment authFragment = new AuthFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentContainer, authFragment)
+                    .add(R.id.fragmentContainer1, authFragment)
                     .commit();
         }
     }

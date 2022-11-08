@@ -18,7 +18,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.taskorg.Adapters.ToDoAdapter;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -44,9 +46,12 @@ public class AddNewTask  extends BottomSheetDialogFragment {
     private String deadline_dateDateUpdate = "";
     private FirebaseAuth mAuth;
     private String uid;
-
-    public static AddNewTask newInstance(){
-        return new AddNewTask();
+    private ToDoAdapter adapter;
+    public AddNewTask(ToDoAdapter adapter) {
+        this.adapter = adapter;
+    }
+    public static AddNewTask newInstance(ToDoAdapter adapter){
+        return new AddNewTask(adapter);
     }
 
     @Nullable
@@ -163,7 +168,12 @@ public class AddNewTask  extends BottomSheetDialogFragment {
                     }).addOnFailureListener(e -> Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show());
                 }
             }
+            adapter.notifyDataSetChanged();
             dismiss();
+            ViewListFragment fragment = new ViewListFragment();
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .commit();
         });
     }
 
@@ -176,6 +186,10 @@ public class AddNewTask  extends BottomSheetDialogFragment {
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
+        ViewListFragment fragment = new ViewListFragment();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .commit();
         Activity activity = getActivity();
         if (activity instanceof  OnDialogCloseListener){
             ((OnDialogCloseListener)activity).onDialogClose(dialog);

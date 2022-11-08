@@ -41,6 +41,7 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
             dialog.show();
         }else{
             adapter.editTask(position);
+
         }
     }
 

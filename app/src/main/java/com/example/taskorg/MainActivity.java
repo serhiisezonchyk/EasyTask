@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.example.taskorg.Adapters.ToDoAdapter;
 import com.example.taskorg.Auth.AuthFragment;
 import com.example.taskorg.Model.TaskModel;
+import com.example.taskorg.Vars.GlobalVar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
@@ -28,67 +29,20 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class MainActivity extends AppCompatActivity implements OnDialogCloseListener{
+public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private FloatingActionButton mFab;
-    private FirebaseFirestore firestore;
-    private ToDoAdapter adapter;
-    private List<TaskModel> mList;
-    private Query query;
-    private ListenerRegistration listenerRegistration;
-
-    private String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-
-        recyclerView = findViewById(R.id.recycerlview);
-        mFab = findViewById(R.id.floatingActionButton);
-        firestore = FirebaseFirestore.getInstance();
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-
-        mFab.setOnClickListener(v -> AddNewTask.newInstance().show(getSupportFragmentManager() , AddNewTask.TAG));
-
-        mList = new ArrayList<>();
-        adapter = new ToDoAdapter(MainActivity.this , mList, mAuth.getCurrentUser().getUid());
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelper(adapter));
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-        showData();
-        recyclerView.setAdapter(adapter);
-    }
-    @SuppressLint("NotifyDataSetChanged")
-    private void showData(){
-        query = firestore.collection(uid).orderBy("time" , Query.Direction.DESCENDING);
-
-        listenerRegistration = query.addSnapshotListener((value, error) -> {
-            if(value!=null){
-                for ( DocumentChange documentChange : value.getDocumentChanges()){
-                if (documentChange.getType() == DocumentChange.Type.ADDED){
-                    String id = documentChange.getDocument().getId();
-                    TaskModel taskModel = documentChange.getDocument().toObject(TaskModel.class).withId(id);
-                    mList.add(taskModel);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-            listenerRegistration.remove();
-            }
-        });
+        if (savedInstanceState == null) {
+            ViewListFragment fragment = new ViewListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragmentContainer, fragment)
+                    .commit();
+        }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    @Override
-    public void onDialogClose(DialogInterface dialogInterface) {
-        mList.clear();
-        showData();
-        adapter.notifyDataSetChanged();
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -105,6 +59,17 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
                     .replace(R.id.fragmentContainer, authFragment)
                     .commit();
             return true;
+        }else if(item.getItemId() == R.id.action_view_state){
+            GlobalVar.listState = !GlobalVar.listState;
+
+            if(GlobalVar.listState)
+                item.setTitle("View by cards");
+            else
+                item.setTitle("View by list");
+            ViewListFragment fragment = new ViewListFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .commit();
         }
         return super.onOptionsItemSelected(item);
     }
