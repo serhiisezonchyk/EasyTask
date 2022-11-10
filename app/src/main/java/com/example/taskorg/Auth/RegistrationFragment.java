@@ -41,16 +41,16 @@ public class RegistrationFragment extends Fragment {
             AuthFragment authFragment = AuthFragment.newInstance();
             getFragmentManager().beginTransaction()
                     .addToBackStack(null)
-                    .replace(R.id.fragmentContainer, authFragment)
+                    .replace(R.id.fragmentContainer1, authFragment)
                     .commit();
         });
 
         btnRegistration.setOnClickListener(view12 -> {
-            if(etPass.getText().toString().equals(etPass2.getText().toString())
-                    &&!etEmail.getText().toString().isEmpty()
-                    &&!etPass.getText().toString().isEmpty())
+            if (etPass.getText().toString().equals(etPass2.getText().toString())
+                    && !etEmail.getText().toString().isEmpty()
+                    && !etPass.getText().toString().isEmpty())
                 reg(etEmail.getText().toString(), etPass.getText().toString());
-            else{
+            else {
                 Toast.makeText(getActivity(), "Pass not same", Toast.LENGTH_SHORT).show();
             }
         });
@@ -59,18 +59,18 @@ public class RegistrationFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_registration, container,false);
+        return inflater.inflate(R.layout.fragment_registration, container, false);
     }
 
-    public static  RegistrationFragment newInstance(){
-        RegistrationFragment registrationFragment= new RegistrationFragment();
+    public static RegistrationFragment newInstance() {
+        RegistrationFragment registrationFragment = new RegistrationFragment();
         return registrationFragment;
     }
 
-    public void reg(String email,String pass){
+    public void reg(String email, String pass) {
         mAuth.createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(getActivity(), task -> {
-                    if(task.isSuccessful())
+                    if (task.isSuccessful())
                         Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
                     else
                         Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();

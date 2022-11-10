@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.taskorg.R;
-import com.example.taskorg.SplashActivity;
+import com.example.taskorg.Activities.SplashActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -31,7 +31,7 @@ public class AuthFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = firebaseAuth -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
-            if(user!=null){
+            if (user != null) {
                 startActivity(new Intent(getActivity(), SplashActivity.class));
                 getActivity().finish();
             }
@@ -48,11 +48,11 @@ public class AuthFragment extends Fragment {
             RegistrationFragment registrationFragment = RegistrationFragment.newInstance();
             getFragmentManager().beginTransaction()
                     .addToBackStack(null)
-                    .replace(R.id.fragmentContainer, registrationFragment)
+                    .replace(R.id.fragmentContainer1, registrationFragment)
                     .commit();
         });
         FirebaseUser user = mAuth.getCurrentUser();
-        if(user!=null){
+        if (user != null) {
             startActivity(new Intent(getActivity(), SplashActivity.class));
             getActivity().finish();
         }
@@ -65,20 +65,18 @@ public class AuthFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_auth, container, false);
     }
 
-    public void auth(String email,String pass){
+    public void auth(String email, String pass) {
         mAuth.signInWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(getActivity(), task -> {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(getActivity(), SplashActivity.class));
-
-                    }
-                    else
+                    } else
                         Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    public static AuthFragment newInstance(){
+    public static AuthFragment newInstance() {
         return new AuthFragment();
     }
 

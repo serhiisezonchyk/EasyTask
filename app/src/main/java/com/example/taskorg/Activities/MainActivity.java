@@ -1,32 +1,18 @@
-package com.example.taskorg;
+package com.example.taskorg.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.taskorg.Adapters.ToDoAdapter;
 import com.example.taskorg.Auth.AuthFragment;
-import com.example.taskorg.Model.TaskModel;
+import com.example.taskorg.Fragments.ViewListFragment;
+import com.example.taskorg.R;
 import com.example.taskorg.Vars.GlobalVar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -59,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fragmentContainer, authFragment)
                     .commit();
             return true;
-        }else if(item.getItemId() == R.id.action_view_state){
+        } else if (item.getItemId() == R.id.action_view_state) {
             GlobalVar.listState = !GlobalVar.listState;
 
-            if(GlobalVar.listState)
+            if (GlobalVar.listState)
                 item.setTitle("View by cards");
             else
                 item.setTitle("View by list");

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddNewTask">
+    tools:context=".Fragments.AddNewTask">
 
     <EditText
         android:id="@+id/task_edittext"
@@ -26,10 +26,24 @@
         android:layout_marginTop="8dp"
         android:drawableRight="@drawable/ic_baseline_calendar_today_24"
         android:drawablePadding="8dp"
-        android:text="Set Deadline Date"
+        android:text="Deadline Date"
         android:textColor="@color/teal_700"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_edittext" />
+
+    <TextView
+        android:id="@+id/set_deadline_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:drawableRight="@drawable/ic_baseline_clock_24"
+        android:drawablePadding="8dp"
+        android:text="Deadline Time"
+        android:textColor="@color/teal_700"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/set_deadline_date_tv"
         app:layout_constraintTop_toBottomOf="@+id/task_edittext" />
 
     <Button
@@ -41,5 +55,17 @@
         android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/task_edittext" />
+
+    <CheckBox
+        android:id="@+id/checkboxImportance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:backgroundTint="@color/teal_700"
+        android:text="important"
+        android:textColor="@color/teal_700"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/set_deadline_date_tv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

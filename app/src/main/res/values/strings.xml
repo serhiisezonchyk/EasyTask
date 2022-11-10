@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">EasyTask</string>
     <string name="log_out">Logout</string>
+    <string-array name="categories">
+        <item>Any</item>
+        <item>Work</item>
+        <item>Study</item>
+        <item>Hobby</item>
+        <item>Family</item>
+        <item>Friends</item>
+    </string-array>
 </resources>

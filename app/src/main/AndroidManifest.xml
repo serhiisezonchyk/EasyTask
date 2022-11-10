@@ -22,11 +22,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activities.SplashActivity"
             android:exported="false">
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="false">
         </activity>
     </application>

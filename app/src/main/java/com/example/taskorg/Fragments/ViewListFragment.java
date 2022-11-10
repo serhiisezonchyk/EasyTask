@@ -1,4 +1,4 @@
-package com.example.taskorg;
+package com.example.taskorg.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -16,12 +16,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskorg.Adapters.ToDoAdapter;
+import com.example.taskorg.Activities.MainActivity;
 import com.example.taskorg.Model.TaskModel;
+import com.example.taskorg.Listeners.OnDialogCloseListener;
+import com.example.taskorg.R;
+import com.example.taskorg.Utils.TouchHelper;
 import com.example.taskorg.Vars.GlobalVar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -31,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ViewListFragment extends Fragment implements OnDialogCloseListener{
+public class ViewListFragment extends Fragment implements OnDialogCloseListener {
     private RecyclerView recyclerView;
     private FloatingActionButton mFab;
     private FirebaseFirestore firestore;
@@ -54,19 +56,27 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener{
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mFab.setOnClickListener(v -> AddNewTask.newInstance(adapter).show(getFragmentManager() , AddNewTask.TAG));
-
+        mFab.setOnClickListener(v -> AddNewTask.newInstance(adapter).show(getFragmentManager(), AddNewTask.TAG));
+        mFab.setOnLongClickListener((View.OnLongClickListener) view1 -> {
+            DataFragment fragment = DataFragment.newInstance(adapter, mList);
+            getFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.fragmentContainer, fragment)
+                    .commit();
+            return true;
+        });
         mList = new ArrayList<>();
-        if(GlobalVar.listState == false)
+        if (GlobalVar.listState == false)
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        adapter = new ToDoAdapter((MainActivity) getActivity() , mList, mAuth.getCurrentUser().getUid());
+        adapter = new ToDoAdapter((MainActivity) getActivity(), mList, mAuth.getCurrentUser().getUid());
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelper(adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
         showData();
         recyclerView.setAdapter(adapter);
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,13 +84,13 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener{
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void showData(){
-        query = firestore.collection(uid).orderBy("time" , Query.Direction.DESCENDING);
+    private void showData() {
+        query = firestore.collection(uid).orderBy("time", Query.Direction.DESCENDING);
 
         listenerRegistration = query.addSnapshotListener((value, error) -> {
-            if(value!=null){
-                for ( DocumentChange documentChange : value.getDocumentChanges()){
-                    if (documentChange.getType() == DocumentChange.Type.ADDED){
+            if (value != null) {
+                for (DocumentChange documentChange : value.getDocumentChanges()) {
+                    if (documentChange.getType() == DocumentChange.Type.ADDED) {
                         String id = documentChange.getDocument().getId();
                         TaskModel taskModel = documentChange.getDocument().toObject(TaskModel.class).withId(id);
                         mList.add(taskModel);
@@ -91,6 +101,7 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener{
             }
         });
     }
+
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onDialogClose(DialogInterface dialogInterface) {

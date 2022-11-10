@@ -47,7 +47,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
     }
 
-    public void insertTask(TaskModel task){
+    public void insertTask(TaskModel task) {
         ContentValues cv = new ContentValues();
         cv.put(TASK, task.getTask());
         cv.put(STATUS, 0);
@@ -55,26 +55,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Range")
-    public List<TaskModel> getAllTasks(){
+    public List<TaskModel> getAllTasks() {
         List<TaskModel> taskList = new ArrayList<>();
         Cursor cur = null;
         db.beginTransaction();
-        try{
+        try {
             cur = db.query(TODO_TABLE, null, null, null, null, null, null, null);
-            if(cur != null){
-                if(cur.moveToFirst()){
-                    do{
+            if (cur != null) {
+                if (cur.moveToFirst()) {
+                    do {
                         TaskModel task = new TaskModel();
                         task.setId(String.valueOf(cur.getInt(cur.getColumnIndex(ID))));
                         task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                         task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                         taskList.add(task);
                     }
-                    while(cur.moveToNext());
+                    while (cur.moveToNext());
                 }
             }
-        }
-        finally {
+        } finally {
             db.endTransaction();
             assert cur != null;
             cur.close();
@@ -82,19 +81,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return taskList;
     }
 
-    public void updateStatus(int id, int status){
+    public void updateStatus(int id, int status) {
         ContentValues cv = new ContentValues();
         cv.put(STATUS, status);
-        db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+        db.update(TODO_TABLE, cv, ID + "= ?", new String[]{String.valueOf(id)});
     }
 
     public void updateTask(int id, String task) {
         ContentValues cv = new ContentValues();
         cv.put(TASK, task);
-        db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+        db.update(TODO_TABLE, cv, ID + "= ?", new String[]{String.valueOf(id)});
     }
 
-    public void deleteTask(int id){
-        db.delete(TODO_TABLE, ID + "= ?", new String[] {String.valueOf(id)});
+    public void deleteTask(int id) {
+        db.delete(TODO_TABLE, ID + "= ?", new String[]{String.valueOf(id)});
     }
 }

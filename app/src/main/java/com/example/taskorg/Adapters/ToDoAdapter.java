@@ -6,14 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.taskorg.AddNewTask;
-import com.example.taskorg.MainActivity;
+import com.example.taskorg.Fragments.AddNewTask;
+import com.example.taskorg.Activities.MainActivity;
+import com.example.taskorg.Fragments.DataFragment;
 import com.example.taskorg.Model.TaskModel;
 import com.example.taskorg.R;
 import com.example.taskorg.Vars.GlobalVar;
@@ -28,7 +28,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     private FirebaseFirestore firestore;
     private String uid;
 
-    public ToDoAdapter(MainActivity activity, List<TaskModel> list, String uid){
+    public ToDoAdapter(MainActivity activity, List<TaskModel> list, String uid) {
         this.list = list;
         this.activity = activity;
         this.uid = uid;
@@ -39,57 +39,72 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
 
-        if(GlobalVar.listState == false)
-            view = LayoutInflater.from(activity).inflate(R.layout.each_task_card , parent , false);
+        if (GlobalVar.listState == false)
+            view = LayoutInflater.from(activity).inflate(R.layout.each_task_card, parent, false);
         else
-            view = LayoutInflater.from(activity).inflate(R.layout.each_task, parent , false);
+            view = LayoutInflater.from(activity).inflate(R.layout.each_task, parent, false);
 
         firestore = FirebaseFirestore.getInstance();
         return new MyViewHolder(view);
     }
 
-    public void deleteTask(int position){
+    public void deleteTask(int position) {
         TaskModel model = list.get(position);
         firestore.collection(uid).document(model.TaskId).delete();
         list.remove(position);
         notifyItemRemoved(position);
     }
-    public Context getContext(){
+
+    public Context getContext() {
         return activity;
     }
-    public void editTask(int position){
+
+    public void editTask(int position) {
         TaskModel model = list.get(position);
 
         Bundle bundle = new Bundle();
-        bundle.putString("task" , model.getTask());
-        bundle.putString("deadline_date" , model.getDeadline_date());
-        bundle.putString("id" , model.TaskId);
+        bundle.putString("task", model.getTask());
+        bundle.putString("deadline_date", model.getDeadline_date());
+        bundle.putString("deadline_time", model.getDeadline_time());
+        bundle.putBoolean("important", model.getImportant());
+        bundle.putString("address", model.getAddress());
+        bundle.putString("id", model.TaskId);
+        bundle.putString("category", model.getCategory());
+        bundle.putString("keywords", model.getKeywords());
+        bundle.putString("description", model.getDescription());
 
-        AddNewTask addNewTask = new AddNewTask(this);
-        addNewTask.setArguments(bundle);
-        addNewTask.show(activity.getSupportFragmentManager() , addNewTask.getTag());
+        DataFragment fragment = DataFragment.newInstance(this, list);
+        fragment.setArguments(bundle);
+        activity.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.fragmentContainer, fragment)
+                .commit();
     }
+
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         TaskModel model = list.get(position);
+
         holder.mCheckBox.setText(model.getTask());
-
-        holder.mDeadlineDateTv.setText("Deadline date:  " + model.getDeadline_date());
-
+        holder.mDeadlineDateTv.setText("Deadline date:  " + model.getDeadline_date() + " (" + model.getDeadline_time() + ")");
+        if (model.getImportant()) {
+            holder.mDeadlineDateTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_alert_24, 0, 0, 0);
+        }
         holder.mCheckBox.setChecked(toBoolean(model.getStatus()));
 
+
         holder.mCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                firestore.collection(uid).document(model.TaskId).update("status" , 1);
-            }else{
-                firestore.collection(uid).document(model.TaskId).update("status" , 0);
+            if (isChecked) {
+                firestore.collection(uid).document(model.TaskId).update("status", 1);
+            } else {
+                firestore.collection(uid).document(model.TaskId).update("status", 0);
             }
         });
 
     }
 
-    private boolean toBoolean(int status){
+    private boolean toBoolean(int status) {
         return status != 0;
     }
 
@@ -98,7 +113,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         return list.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView mDeadlineDateTv;
         CheckBox mCheckBox;

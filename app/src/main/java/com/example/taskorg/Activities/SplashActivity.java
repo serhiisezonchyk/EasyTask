@@ -1,4 +1,4 @@
-package com.example.taskorg;
+package com.example.taskorg.Activities;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.example.taskorg.R;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -19,7 +21,7 @@ public class SplashActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this , MainActivity.class));
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
         }, 4000);
     }

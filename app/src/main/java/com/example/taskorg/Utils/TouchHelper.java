@@ -1,4 +1,4 @@
-package com.example.taskorg;
+package com.example.taskorg.Utils;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskorg.Adapters.ToDoAdapter;
+import com.example.taskorg.R;
 
 
 public class TouchHelper extends ItemTouchHelper.SimpleCallback {
     private ToDoAdapter adapter;
 
     public TouchHelper(ToDoAdapter adapter) {
-        super(0 , ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.adapter = adapter;
     }
 
@@ -31,7 +32,7 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         final int position = viewHolder.getAdapterPosition();
-        if (direction == ItemTouchHelper.RIGHT){
+        if (direction == ItemTouchHelper.RIGHT) {
             AlertDialog.Builder builder = new AlertDialog.Builder(adapter.getContext());
             builder.setMessage("Are You Sure?")
                     .setTitle("Delete Task")
@@ -39,7 +40,7 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
 
             AlertDialog dialog = builder.create();
             dialog.show();
-        }else{
+        } else {
             adapter.editTask(position);
 
         }
