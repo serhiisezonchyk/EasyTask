@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -151,9 +152,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 taskMap.put("time", FieldValue.serverTimestamp());
                 taskMap.put("important", checkBox.isChecked());
                 taskMap.put("address", "");
-                taskMap.put("category", "");
+                taskMap.put("category", "Any");
                 taskMap.put("keywords", "");
                 taskMap.put("description", "");
+                taskMap.put("tasksBefore", new ArrayList<String>());
 
                 Date date = new Date();
                 date = DateUtil.addDays(date, 1);

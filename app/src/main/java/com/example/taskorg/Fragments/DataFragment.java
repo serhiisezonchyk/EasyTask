@@ -39,9 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-        Uri.parse("https://www.google.com/maps/search/" + user_str));
-        startActivity(intent);*/
 public class DataFragment extends Fragment {
 
     public static final String TAG = "AddNewTask";
@@ -62,6 +59,7 @@ public class DataFragment extends Fragment {
     private String categoryStr = "";
     private String keywordsStr = "";
     private String descriptionStr = "";
+    private ArrayList<String> tasksBeforeStr = new ArrayList<>();
     private List<TaskModel> tasksBefore = new ArrayList<>();
     private TextView setTasksBefore;
 
@@ -98,24 +96,19 @@ public class DataFragment extends Fragment {
         mCategorySpinner = view.findViewById(R.id.category_spinner);
         mKeywordsEdit = view.findViewById(R.id.keywords_et);
         mDescriptionEdit = view.findViewById(R.id.description_et);
+        setTasksBefore = view.findViewById(R.id.after_et);
 
         Button mSaveBtn = view.findViewById(R.id.save_btn);
         mFab = view.findViewById(R.id.floatingActionButton);
-        setTasksBefore = view.findViewById(R.id.after_et);
         setTasksBefore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ToDoAdapterDialog dataAdapter = new ToDoAdapterDialog(mList, new ToDoAdapterDialog.RecyclerViewItemClickListener() {
-                    @Override
-                    public void clickOnItem(TaskModel data) {
-
-                    }
-
-                });
+                ToDoAdapterDialog dataAdapter = new ToDoAdapterDialog(mList, data -> {}, tasksBefore, id);
                 TasksDialog customDialog = new TasksDialog(getActivity(), dataAdapter);
                 customDialog.setDialogListener(new TasksDialog.DialogListener() {
                     @Override
                     public void action(List<TaskModel> arr) {
+                        tasksBefore.clear();
                         tasksBefore = arr;
 
                         StringBuilder output = new StringBuilder();
@@ -147,17 +140,31 @@ public class DataFragment extends Fragment {
             categoryStr = bundle.getString("category");
             keywordsStr = bundle.getString("keywords");
             descriptionStr = bundle.getString("description");
-
+            tasksBeforeStr = bundle.getStringArrayList("tasksBefore");
 
             mTaskEdit.setText(task);
             mAddressEdit.setText(addressStr);
             mCategorySpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.categories)).indexOf(categoryStr));
             mKeywordsEdit.setText(keywordsStr);
             mDescriptionEdit.setText(descriptionStr);
-
             setDeadlineDate.setText(deadline_dateDate);
             setDeadlineTime.setText(deadline_timeTime);
             checkBox.setChecked(important);
+
+            StringBuilder sbTasksBefore = new StringBuilder();
+            sbTasksBefore.append("Do after: ");
+            int counter = 0;
+            if (!tasksBeforeStr.isEmpty())
+                for (String key : tasksBeforeStr) {
+                    for (TaskModel model : mList) {
+                        if (key.equals(model.getId())) {
+                            tasksBefore.add(model);
+                            sbTasksBefore.append(model.getTask() + " ");
+                            counter++;
+                        }
+                    }
+                }
+            setTasksBefore.setText(counter == 0 ? "Click to chose tasks" : sbTasksBefore.toString());
 
         }
 //
@@ -247,9 +254,15 @@ public class DataFragment extends Fragment {
 
             String task = mTaskEdit.getText().toString();
             addressStr = mAddressEdit.getText().toString();
-            categoryStr = mCategorySpinner.getSelectedItem().toString();
+            categoryStr = mCategorySpinner.getSelectedItem().toString().isEmpty() ?
+                    "Any" : mCategorySpinner.getSelectedItem().toString();
             keywordsStr = mKeywordsEdit.getText().toString();
             descriptionStr = mDescriptionEdit.getText().toString();
+
+            tasksBeforeStr.clear();
+            for (TaskModel model : tasksBefore) {
+                tasksBeforeStr.add(model.getId());
+            }
 
             if (finalIsUpdate) {
                 firestore.collection(uid).document(id).update("task", task,
@@ -259,7 +272,8 @@ public class DataFragment extends Fragment {
                         "address", addressStr,
                         "category", categoryStr,
                         "keywords", keywordsStr,
-                        "description", descriptionStr);
+                        "description", descriptionStr,
+                        "tasksBefore", tasksBeforeStr);
                 Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
 
             } else {
@@ -279,6 +293,7 @@ public class DataFragment extends Fragment {
                     taskMap.put("category", categoryStr);
                     taskMap.put("keywords", keywordsStr);
                     taskMap.put("description", descriptionStr);
+                    taskMap.put("tasksBefore", tasksBeforeStr);
 
                     Date date = new Date();
                     date = DateUtil.addDays(date, 1);
@@ -311,7 +326,6 @@ public class DataFragment extends Fragment {
                     .replace(R.id.fragmentContainer, fragment)
                     .commit();
         });
-
     }
 
     @Override

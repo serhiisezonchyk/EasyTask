@@ -1,10 +1,39 @@
 package com.example.taskorg.Model;
 
-public class TaskModel extends TaskId {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    private String task, deadline_date, deadline_time, address, category, keywords, description;
+public class TaskModel extends TaskId implements Serializable {
+
+    private String task,
+            deadline_date,
+            deadline_time,
+            address,
+            category,
+            keywords,
+            description,
+            create_date,
+            create_time;
     private int status;
     private boolean important;
+    private ArrayList<String> tasksBefore;
+
+    public ArrayList<String> getTasksBefore() {
+        return tasksBefore;
+    }
+
+    public void setTasksBefore(ArrayList<String> tasksBefore) {
+        this.tasksBefore = tasksBefore;
+    }
+
+    public String getCreate_date() {
+        return create_date;
+    }
+
+    public String getCreate_time() {
+        return create_time;
+    }
 
     public String getCategory() {
         return category;

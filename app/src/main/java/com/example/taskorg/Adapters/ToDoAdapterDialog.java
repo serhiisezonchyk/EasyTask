@@ -17,21 +17,17 @@ import java.util.List;
 public class ToDoAdapterDialog extends RecyclerView.Adapter<ToDoAdapterDialog.ToDoViewHolder> {
     private List<TaskModel> list;
     private List<TaskModel> listReturn = new ArrayList<>();
+    private List<TaskModel> tasksBefore ;
+    private String currentTaskId = null;
     RecyclerViewItemClickListener recyclerViewItemClickListener;
 
-    public ToDoAdapterDialog(List<TaskModel> list, RecyclerViewItemClickListener listener) {
+    public ToDoAdapterDialog(List<TaskModel> list, RecyclerViewItemClickListener listener, List<TaskModel> tasksBefore, String currentTaskId) {
         this.list = list;
+        this.tasksBefore = tasksBefore;
+        this.currentTaskId = currentTaskId;
         this.recyclerViewItemClickListener = listener;
     }
 
-    //    private List<TaskModel>  createNewList(List<TaskModel>  list){
-//        List<TaskModel> newList = new ArrayList<>();
-//        for (TaskModel task:list) {
-//            if(!task.equals(currenTask))
-//                newList.add(task);
-//        }
-//        return newList;
-//    }
     @NonNull
     @Override
     public ToDoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,16 +40,29 @@ public class ToDoAdapterDialog extends RecyclerView.Adapter<ToDoAdapterDialog.To
 
     @Override
     public void onBindViewHolder(@NonNull ToDoAdapterDialog.ToDoViewHolder todoViewHolder, int i) {
-        todoViewHolder.mCheckBox.setText(list.get(i).getTask());
-        todoViewHolder.mCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                TaskModel model = list.get(i);
-                listReturn.add(model);
-            } else {
-                TaskModel model = list.get(i);
-                listReturn.remove(model);
+        if(!currentTaskId.equals(list.get(i).getId())) {
+
+            todoViewHolder.mCheckBox.setText(list.get(i).getTask());
+            for (TaskModel key : tasksBefore) {
+                if (key.getId().equals(list.get(i).getId())) {
+                    todoViewHolder.mCheckBox.setChecked(true);
+                    listReturn.add(list.get(i));
+                }
             }
-        });
+            todoViewHolder.mCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    TaskModel model = list.get(i);
+                    listReturn.add(model);
+                } else {
+                    TaskModel model = list.get(i);
+                    listReturn.remove(model);
+                }
+            });
+
+        }else{
+            todoViewHolder.mCheckBox.setText(list.get(i).getTask());
+            todoViewHolder.mCheckBox.setEnabled(false);
+        }
     }
 
     @Override

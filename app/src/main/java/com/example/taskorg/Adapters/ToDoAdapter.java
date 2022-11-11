@@ -2,6 +2,7 @@ package com.example.taskorg.Adapters;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.taskorg.Fragments.AddNewTask;
 import com.example.taskorg.Activities.MainActivity;
 import com.example.taskorg.Fragments.DataFragment;
+import com.example.taskorg.Fragments.DetailedTaskFragment;
 import com.example.taskorg.Model.TaskModel;
 import com.example.taskorg.R;
 import com.example.taskorg.Vars.GlobalVar;
@@ -72,6 +74,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         bundle.putString("category", model.getCategory());
         bundle.putString("keywords", model.getKeywords());
         bundle.putString("description", model.getDescription());
+        bundle.putStringArrayList("tasksBefore",model.getTasksBefore());
 
         DataFragment fragment = DataFragment.newInstance(this, list);
         fragment.setArguments(bundle);
@@ -99,6 +102,20 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
                 firestore.collection(uid).document(model.TaskId).update("status", 1);
             } else {
                 firestore.collection(uid).document(model.TaskId).update("status", 0);
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("model", model);
+                DetailedTaskFragment fragment = DetailedTaskFragment.newInstance();
+                fragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.fragmentContainer, fragment)
+                        .commit();
+                return true;
             }
         });
 

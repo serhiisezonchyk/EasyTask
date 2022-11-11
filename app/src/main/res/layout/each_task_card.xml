@@ -4,6 +4,7 @@
     android:layout_width="180dp"
     android:layout_height="180dp"
     android:orientation="horizontal"
+    android:background="?android:attr/selectableItemBackground"
     android:padding="5dp">
 
 
