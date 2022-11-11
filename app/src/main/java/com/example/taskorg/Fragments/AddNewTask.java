@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +21,6 @@ import androidx.annotation.Nullable;
 import com.example.taskorg.Adapters.ToDoAdapter;
 import com.example.taskorg.Listeners.OnDialogCloseListener;
 import com.example.taskorg.R;
-import com.example.taskorg.Utils.DateUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -35,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+//Fast adding task at the bottom of screen
 public class AddNewTask extends BottomSheetDialogFragment {
 
     public static final String TAG = "AddNewTask";
@@ -45,11 +44,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private EditText mTaskEdit;
     private String deadline_dateDate = "";
     private String deadline_timeTime = "";
-    private String addressStr = "";
 
     private FirebaseFirestore firestore;
     private Context context;
-    private String id = "";
     private String uid;
     private final ToDoAdapter adapter;
 
@@ -65,23 +62,27 @@ public class AddNewTask extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.add_new_task, container, false);
-
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //Get uid of current user
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
 
+        //Initialize objects
         setDeadlineDate = view.findViewById(R.id.set_deadline_date_tv);
         setDeadlineTime = view.findViewById(R.id.set_deadline_time_tv);
         checkBox = view.findViewById(R.id.checkboxImportance);
         mTaskEdit = view.findViewById(R.id.task_edittext);
         Button mSaveBtn = view.findViewById(R.id.save_btn);
 
+        //Initialize firestore for adding future task
         firestore = FirebaseFirestore.getInstance();
 
+        //Deadline date click listener. Opens calendar
         setDeadlineDate.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int MONTH = calendar.get(Calendar.MONTH);
@@ -91,21 +92,29 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 month = month + 1;
                 setDeadlineDate.setText(dayOfMonth + "/" + month + "/" + year);
                 deadline_dateDate = dayOfMonth + "/" + month + "/" + year;
+
+                //Is it`s today
                 if (deadline_dateDate.equals(DAY + "/" + month + "/" + YEAR)) {
                     setDeadlineTime.setText("23:59");
                     deadline_timeTime = "23:59";
-                } else {
+                }
+                //another day
+                else {
                     setDeadlineTime.setText("12:0");
                     deadline_timeTime = "12:0";
                 }
             }, YEAR, MONTH, DAY);
+
+            //Min date it`s today
             datePickerDialog.getDatePicker().setMinDate(new Date().getTime());
             datePickerDialog.show();
         });
 
+        //Deadline time click listener. Opens clock for choosing time
         setDeadlineTime.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
 
+            //For adding date deadline
             int MONTH = calendar.get(Calendar.MONTH);
             int YEAR = calendar.get(Calendar.YEAR);
             int DAY = calendar.get(Calendar.DATE);
@@ -125,26 +134,27 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 setDeadlineTime.setText(selectedHour + ":" + selectedMinute);
                 deadline_timeTime = selectedHour + ":" + selectedMinute;
 
+                //If deadline DATE is null, create new
                 if (deadline_dateDate.equals("")) {
+                    calendar.add(Calendar.MONTH, 1);
                     calendar.add(Calendar.DATE, 1);
-                    setDeadlineDate.setText(calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + 1 + "/" + calendar.get(Calendar.YEAR));
-                    deadline_dateDate = calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + 1 + "/" + calendar.get(Calendar.YEAR);
+                    setDeadlineDate.setText(calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH)  + "/" + calendar.get(Calendar.YEAR));
+                    deadline_dateDate = calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) +  "/" + calendar.get(Calendar.YEAR);
                 }
             }, HOUR + 2, MIN, true);
             timePickerDialog.setTitle("Select Time");
             timePickerDialog.show();
         });
 
-
+        //Click on save button listener
         mSaveBtn.setOnClickListener(v -> {
-
             String task = mTaskEdit.getText().toString();
             if (task.isEmpty()) {
                 Toast.makeText(context, "Empty task not Allowed !!", Toast.LENGTH_SHORT).show();
             } else {
 
+                //Create new map with user`s data
                 Map<String, Object> taskMap = new HashMap<>();
-
                 taskMap.put("task", task);
                 taskMap.put("deadline_date", deadline_dateDate);
                 taskMap.put("deadline_time", deadline_timeTime);
@@ -157,16 +167,14 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 taskMap.put("description", "");
                 taskMap.put("tasksBefore", new ArrayList<String>());
 
+                //Get current date&time
                 Date date = new Date();
-                date = DateUtil.addDays(date, 1);
-
                 SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
                 taskMap.put("create_date", formatterDate.format(date));
-
                 SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm");
-
                 taskMap.put("create_time", formatterTime.format(date));
 
+                //Adding created task
                 firestore.collection(uid).add(taskMap).addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
                         Toast.makeText(context, "Task Saved", Toast.LENGTH_SHORT).show();

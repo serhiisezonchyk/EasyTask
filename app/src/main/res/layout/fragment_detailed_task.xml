@@ -10,9 +10,7 @@
         android:id="@+id/creation_date_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="10dp"
-
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
         android:backgroundTint="@color/teal_700"
@@ -23,19 +21,19 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/task_checkbox"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:buttonTint="@color/teal_700"
-        android:paddingStart="10dp"
-        android:text="Task"
-        android:textSize="25dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
+        android:buttonTint="@color/teal_700"
+        android:text="Task"
         android:textAlignment="center"
+        android:textSize="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,8 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:textAlignment="center"
+        android:layout_marginEnd="10dp"
         android:text="Category"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,9 +59,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="12dp"
-        android:backgroundTint="@color/teal_700"
         android:progress="50"
-        app:layout_constraintEnd_toStartOf="@+id/set_deadline_date_tv"
+        android:progressDrawable="@drawable/drawable_gradient"
+        app:layout_constraintEnd_toStartOf="@+id/deadline_date_textview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCategory" />
 
@@ -72,7 +71,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="10dp"
-        android:drawableRight="@drawable/ic_baseline_calendar_today_24"
         android:drawablePadding="8dp"
         android:text="Deadline Date"
         android:textColor="@color/teal_700"
@@ -94,16 +92,49 @@
         app:layout_constraintTop_toBottomOf="@id/deadline_date_textview" />
 
     <TextView
+        android:id="@+id/address_tvv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/teal_700"
+        android:hint="Address"
+        android:textColorHint="@color/teal_700"
+        android:textSize="23sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/remind_tv" />
+
+    <TextView
         android:id="@+id/address_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@color/teal_700"
+        android:textSize="18sp"
         android:hint="Write Your Address Here ...."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/remind_tv" />
+        app:layout_constraintTop_toBottomOf="@id/address_tvv" />
+
+    <TextView
+        android:id="@+id/after_tvv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/teal_700"
+        android:hint="Previos tasks"
+        android:textColorHint="@color/teal_700"
+        android:textSize="23sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/address_tv" />
 
     <TextView
         android:id="@+id/after_tv"
@@ -111,12 +142,31 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@color/teal_700"
+        android:textSize="18sp"
         android:hint="Click to chose tasks"
+        android:lines="7"
+        android:minLines="1"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/address_tv" />
+        app:layout_constraintTop_toBottomOf="@id/after_tvv" />
 
+    <TextView
+        android:id="@+id/keywords_tvv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/teal_700"
+        android:hint="Keywords"
+        android:textColorHint="@color/teal_700"
+        android:textSize="23sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/after_tv" />
 
     <TextView
         android:id="@+id/keywords_tv"
@@ -124,11 +174,28 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@color/teal_700"
+        android:textSize="18sp"
         android:hint="Write Your Keywords Here ...."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/after_tv" />
+        app:layout_constraintTop_toBottomOf="@id/keywords_tvv" />
+
+    <TextView
+        android:id="@+id/description_tvv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/teal_700"
+        android:hint="More info..."
+        android:textColorHint="@color/teal_700"
+        android:textSize="23sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keywords_tv" />
 
     <TextView
         android:id="@+id/description_tv"
@@ -136,6 +203,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@color/teal_700"
+        android:textSize="18sp"
         android:hint="Write Your Description Here ...."
         android:lines="7"
         android:minLines="7"
@@ -143,7 +211,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/keywords_tv" />
+        app:layout_constraintTop_toBottomOf="@id/description_tvv" />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

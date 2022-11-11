@@ -24,7 +24,6 @@ import com.example.taskorg.Adapters.ToDoAdapterDialog;
 import com.example.taskorg.Dialogs.TasksDialog;
 import com.example.taskorg.Model.TaskModel;
 import com.example.taskorg.R;
-import com.example.taskorg.Utils.DateUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -41,8 +40,9 @@ import java.util.Map;
 
 public class DataFragment extends Fragment {
 
-    public static final String TAG = "AddNewTask";
+    //List with tasks
     private List<TaskModel> mList;
+
 
     private TextView setDeadlineDate;
     private TextView setDeadlineTime;
@@ -52,6 +52,7 @@ public class DataFragment extends Fragment {
     private Spinner mCategorySpinner;
     private EditText mKeywordsEdit;
     private EditText mDescriptionEdit;
+    private TextView setTasksBefore;
 
     private String deadline_dateDate = "";
     private String deadline_timeTime = "";
@@ -61,15 +62,12 @@ public class DataFragment extends Fragment {
     private String descriptionStr = "";
     private ArrayList<String> tasksBeforeStr = new ArrayList<>();
     private List<TaskModel> tasksBefore = new ArrayList<>();
-    private TextView setTasksBefore;
 
     private FirebaseFirestore firestore;
     private Context context;
     private String id = "";
     private String uid;
     private ToDoAdapter adapter;
-
-    private FloatingActionButton mFab;
 
     public DataFragment(ToDoAdapter adapter, List<TaskModel> mList) {
         this.adapter = adapter;
@@ -80,59 +78,61 @@ public class DataFragment extends Fragment {
         return new DataFragment(adapter, mList);
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //Current user uid
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
 
+        //Initialize user interface objects
         setDeadlineDate = view.findViewById(R.id.set_deadline_date_tv);
         setDeadlineTime = view.findViewById(R.id.set_deadline_time_tv);
         checkBox = view.findViewById(R.id.checkboxImportance);
-
         mTaskEdit = view.findViewById(R.id.task_edittext);
         mAddressEdit = view.findViewById(R.id.address_et);
         mCategorySpinner = view.findViewById(R.id.category_spinner);
         mKeywordsEdit = view.findViewById(R.id.keywords_et);
         mDescriptionEdit = view.findViewById(R.id.description_et);
         setTasksBefore = view.findViewById(R.id.after_et);
-
         Button mSaveBtn = view.findViewById(R.id.save_btn);
-        mFab = view.findViewById(R.id.floatingActionButton);
-        setTasksBefore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ToDoAdapterDialog dataAdapter = new ToDoAdapterDialog(mList, data -> {}, tasksBefore, id);
-                TasksDialog customDialog = new TasksDialog(getActivity(), dataAdapter);
-                customDialog.setDialogListener(new TasksDialog.DialogListener() {
-                    @Override
-                    public void action(List<TaskModel> arr) {
-                        tasksBefore.clear();
-                        tasksBefore = arr;
+        FloatingActionButton mFab = view.findViewById(R.id.floatingActionButton);
 
-                        StringBuilder output = new StringBuilder();
-                        output.append("Do after: ");
-                        for (TaskModel model : tasksBefore) {
-                            output.append(model.getTask() + " ");
-                        }
-                        setTasksBefore.setText(arr.isEmpty() ? "Click to chose tasks" : output);
-                    }
-                });
-                customDialog.show();
-                customDialog.setCanceledOnTouchOutside(false);
-            }
-        });
-
+        //Get firestore`s instance
         firestore = FirebaseFirestore.getInstance();
 
         boolean isUpdate = false;
 
+        //Open dialog to choose tasks before
+        setTasksBefore.setOnClickListener(view12 -> {
+            ToDoAdapterDialog dataAdapter = new ToDoAdapterDialog(mList, data -> {
+            }, tasksBefore, id);
+            TasksDialog customDialog = new TasksDialog(getActivity(), dataAdapter);
+
+            customDialog.setDialogListener(arr -> {
+                //clear and rebuild tasksBefore list
+                tasksBefore.clear();
+                tasksBefore = arr;
+
+                //Built resulting string
+                StringBuilder output = new StringBuilder();
+                output.append("Do after: ");
+                for (TaskModel model : tasksBefore) {
+                    output.append(model.getTask() + " ");
+                }
+                setTasksBefore.setText(arr.isEmpty() ? "Click to chose tasks" : output);
+            });
+            customDialog.show();
+            customDialog.setCanceledOnTouchOutside(false);
+        });
+
         final Bundle bundle = getArguments();
         if (bundle != null) {
             isUpdate = true;
-            String task = bundle.getString("task");
+
+            //Get all tasks rows
             id = bundle.getString("id");
+            String task = bundle.getString("task");
             deadline_dateDate = bundle.getString("deadline_date");
             deadline_timeTime = bundle.getString("deadline_time");
             boolean important = bundle.getBoolean("important");
@@ -142,6 +142,7 @@ public class DataFragment extends Fragment {
             descriptionStr = bundle.getString("description");
             tasksBeforeStr = bundle.getStringArrayList("tasksBefore");
 
+            //Set all user interface objects with received rows for editing
             mTaskEdit.setText(task);
             mAddressEdit.setText(addressStr);
             mCategorySpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.categories)).indexOf(categoryStr));
@@ -150,7 +151,7 @@ public class DataFragment extends Fragment {
             setDeadlineDate.setText(deadline_dateDate);
             setDeadlineTime.setText(deadline_timeTime);
             checkBox.setChecked(important);
-
+            //Set spinner with info about tasksBefore
             StringBuilder sbTasksBefore = new StringBuilder();
             sbTasksBefore.append("Do after: ");
             int counter = 0;
@@ -165,7 +166,6 @@ public class DataFragment extends Fragment {
                     }
                 }
             setTasksBefore.setText(counter == 0 ? "Click to chose tasks" : sbTasksBefore.toString());
-
         }
 //
 //        mTaskEdit.addTextChangedListener(new TextWatcher() {
@@ -192,6 +192,7 @@ public class DataFragment extends Fragment {
 //            }
 //        });
 
+        //Deadline date click listener. Opens calendar
         setDeadlineDate.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int MONTH = calendar.get(Calendar.MONTH);
@@ -201,21 +202,29 @@ public class DataFragment extends Fragment {
                 month = month + 1;
                 setDeadlineDate.setText(dayOfMonth + "/" + month + "/" + year);
                 deadline_dateDate = dayOfMonth + "/" + month + "/" + year;
+
+                //Is it`s today
                 if (deadline_dateDate.equals(DAY + "/" + month + "/" + YEAR)) {
                     setDeadlineTime.setText("23:59");
                     deadline_timeTime = "23:59";
-                } else {
+                }
+                //another day
+                else {
                     setDeadlineTime.setText("12:0");
                     deadline_timeTime = "12:0";
                 }
             }, YEAR, MONTH, DAY);
+
+            //Min date it`s today
             datePickerDialog.getDatePicker().setMinDate(new Date().getTime());
             datePickerDialog.show();
         });
 
+        //Deadline time click listener. Opens clock for choosing time
         setDeadlineTime.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
 
+            //For adding date deadline
             int MONTH = calendar.get(Calendar.MONTH);
             int YEAR = calendar.get(Calendar.YEAR);
             int DAY = calendar.get(Calendar.DATE);
@@ -237,10 +246,12 @@ public class DataFragment extends Fragment {
                     setDeadlineTime.setText(selectedHour + ":" + selectedMinute);
                     deadline_timeTime = selectedHour + ":" + selectedMinute;
 
+                    //If deadline DATE is null, create new
                     if (deadline_dateDate.equals("")) {
+                        calendar.add(Calendar.MONTH, 1);
                         calendar.add(Calendar.DATE, 1);
-                        setDeadlineDate.setText(calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + 1 + "/" + calendar.get(Calendar.YEAR));
-                        deadline_dateDate = calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + 1 + "/" + calendar.get(Calendar.YEAR);
+                        setDeadlineDate.setText(calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.YEAR));
+                        deadline_dateDate = calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.YEAR);
                     }
                 }
             }, HOUR + 2, MIN, true);
@@ -250,8 +261,11 @@ public class DataFragment extends Fragment {
 
 
         boolean finalIsUpdate = isUpdate;
+
+        //Save button listener
         mSaveBtn.setOnClickListener(v -> {
 
+            //Get all info from user interface objects
             String task = mTaskEdit.getText().toString();
             addressStr = mAddressEdit.getText().toString();
             categoryStr = mCategorySpinner.getSelectedItem().toString().isEmpty() ?
@@ -264,7 +278,9 @@ public class DataFragment extends Fragment {
                 tasksBeforeStr.add(model.getId());
             }
 
+            //Is it`s update
             if (finalIsUpdate) {
+                //Set all fields and update
                 firestore.collection(uid).document(id).update("task", task,
                         "deadline_date", deadline_dateDate,
                         "deadline_time", deadline_timeTime,
@@ -275,14 +291,13 @@ public class DataFragment extends Fragment {
                         "description", descriptionStr,
                         "tasksBefore", tasksBeforeStr);
                 Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
-
             } else {
                 if (task.isEmpty()) {
                     Toast.makeText(context, "Empty task not Allowed !!", Toast.LENGTH_SHORT).show();
                 } else {
 
+                    //Create new map with user`s data
                     Map<String, Object> taskMap = new HashMap<>();
-
                     taskMap.put("task", task);
                     taskMap.put("deadline_date", deadline_dateDate);
                     taskMap.put("deadline_time", deadline_timeTime);
@@ -295,16 +310,14 @@ public class DataFragment extends Fragment {
                     taskMap.put("description", descriptionStr);
                     taskMap.put("tasksBefore", tasksBeforeStr);
 
+                    //Get current date&time
                     Date date = new Date();
-                    date = DateUtil.addDays(date, 1);
-
                     SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
                     taskMap.put("create_date", formatterDate.format(date));
-
                     SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm");
-
                     taskMap.put("create_time", formatterTime.format(date));
 
+                    //Adding created task
                     firestore.collection(uid).add(taskMap).addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()) {
                             Toast.makeText(context, "Task Saved", Toast.LENGTH_SHORT).show();
@@ -320,6 +333,8 @@ public class DataFragment extends Fragment {
                     .replace(R.id.fragmentContainer, fragment)
                     .commit();
         });
+
+        //Listener for closing (click floating button)
         mFab.setOnClickListener(v -> {
             ViewListFragment fragment = new ViewListFragment();
             getFragmentManager().beginTransaction()

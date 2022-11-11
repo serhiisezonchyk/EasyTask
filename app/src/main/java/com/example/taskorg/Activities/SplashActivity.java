@@ -9,6 +9,7 @@ import android.os.Handler;
 
 import com.example.taskorg.R;
 
+//Loading activity
 public class SplashActivity extends AppCompatActivity {
 
     @Override

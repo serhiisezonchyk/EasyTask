@@ -33,9 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+//Fragment with recycler view
 public class ViewListFragment extends Fragment implements OnDialogCloseListener {
-    private RecyclerView recyclerView;
-    private FloatingActionButton mFab;
     private FirebaseFirestore firestore;
     private ToDoAdapter adapter;
     private List<TaskModel> mList;
@@ -47,15 +46,21 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //Current user uid
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-        recyclerView = view.findViewById(R.id.recycerlview);
-        mFab = view.findViewById(R.id.floatingActionButton);
+
+        RecyclerView recyclerView = view.findViewById(R.id.recycerlview);
+        FloatingActionButton mFab = view.findViewById(R.id.floatingActionButton);
         firestore = FirebaseFirestore.getInstance();
 
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (GlobalVar.listState == false)
+            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        else
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        //Listener to default and long click
         mFab.setOnClickListener(v -> AddNewTask.newInstance(adapter).show(getFragmentManager(), AddNewTask.TAG));
         mFab.setOnLongClickListener((View.OnLongClickListener) view1 -> {
             DataFragment fragment = DataFragment.newInstance(adapter, mList);
@@ -65,12 +70,12 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener 
                     .commit();
             return true;
         });
+
+
         mList = new ArrayList<>();
-        if (GlobalVar.listState == false)
-            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
+        //Create adapter with touch helper
         adapter = new ToDoAdapter((MainActivity) getActivity(), mList, mAuth.getCurrentUser().getUid());
-
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelper(adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
         showData();

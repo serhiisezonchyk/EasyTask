@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //Logout button listener
         if (item.getItemId() == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
             AuthFragment authFragment = new AuthFragment();
@@ -45,9 +46,10 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fragmentContainer, authFragment)
                     .commit();
             return true;
-        } else if (item.getItemId() == R.id.action_view_state) {
+        }
+        //Change view List<=>Card
+        else if (item.getItemId() == R.id.action_view_state) {
             GlobalVar.listState = !GlobalVar.listState;
-
             if (GlobalVar.listState)
                 item.setTitle("View by cards");
             else

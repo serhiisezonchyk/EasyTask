@@ -2,7 +2,6 @@ package com.example.taskorg.Dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -22,17 +21,7 @@ public class TasksDialog extends Dialog implements View.OnClickListener {
 
     private DialogListener listener;
 
-    public TasksDialog(Context context, int themeResId) {
-        super(context, themeResId);
-    }
-
-    public TasksDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
-    }
-
-
     public Activity activity;
-    public Dialog dialog;
     public Button yes, no;
     TextView title;
     RecyclerView recyclerView;
@@ -64,6 +53,7 @@ public class TasksDialog extends Dialog implements View.OnClickListener {
         recyclerView.setLayoutManager(mLayoutManager);
 
         recyclerView.setAdapter(adapter);
+
         yes.setOnClickListener(this);
         no.setOnClickListener(this);
     }
@@ -73,6 +63,7 @@ public class TasksDialog extends Dialog implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.yes: {
+                //Set tasksBefore on dataFragment (edit)
                 List<TaskModel> arr = ((ToDoAdapterDialog) adapter).getList();
                 if (listener != null) {
                     listener.action(arr);

@@ -32,23 +32,24 @@ public class ToDoAdapterDialog extends RecyclerView.Adapter<ToDoAdapterDialog.To
     @Override
     public ToDoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.each_task_dialog, parent, false);
-
         ToDoViewHolder vh = new ToDoViewHolder(v);
         return vh;
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull ToDoAdapterDialog.ToDoViewHolder todoViewHolder, int i) {
+        //Current task is deactivated for choosing
         if(!currentTaskId.equals(list.get(i).getId())) {
-
             todoViewHolder.mCheckBox.setText(list.get(i).getTask());
+
+            //Previous checking of tasks
             for (TaskModel key : tasksBefore) {
                 if (key.getId().equals(list.get(i).getId())) {
                     todoViewHolder.mCheckBox.setChecked(true);
                     listReturn.add(list.get(i));
                 }
             }
+            //Listener to click on each task
             todoViewHolder.mCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
                     TaskModel model = list.get(i);
