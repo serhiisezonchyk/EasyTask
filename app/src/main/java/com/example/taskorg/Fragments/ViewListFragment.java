@@ -50,6 +50,7 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         //Current user uid
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
@@ -128,7 +129,7 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener 
     private void showData() {
         mList.clear();
         if(GlobalVar.categoryToShow.equals("Any"))
-            query = firestore.collection(uid).orderBy("time", Query.Direction.DESCENDING).orderBy("");
+            query = firestore.collection(uid).orderBy("time", Query.Direction.DESCENDING);
         else
             query = firestore.collection(uid).whereEqualTo("category", GlobalVar.categoryToShow).orderBy("time", Query.Direction.DESCENDING);
         listenerRegistration = query.addSnapshotListener((value, error) -> {

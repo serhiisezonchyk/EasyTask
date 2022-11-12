@@ -51,6 +51,16 @@ public class DateUtil {
         }
     }
 
+    public static Date getDateFromStrings(String date, String time){
+        if(!date.isEmpty()){
+        int[] D = dateSplitUp(date,true);
+        int[] T = dateSplitUp(time,false);
+        Calendar calendarDate = new GregorianCalendar(D[2], D[1], D[0], T[0], T[1]);
+        return calendarDate.getTime();
+        }
+        else return null;
+    }
+
     public static int[] dateSplitUp(String date, boolean isDate){
         int[] intArr;
         int pos = 0;

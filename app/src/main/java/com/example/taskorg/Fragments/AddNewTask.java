@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import com.example.taskorg.Adapters.ToDoAdapter;
 import com.example.taskorg.Listeners.OnDialogCloseListener;
 import com.example.taskorg.R;
+import com.example.taskorg.Utils.DateUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -142,7 +144,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     setDeadlineDate.setText(calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH)  + "/" + calendar.get(Calendar.YEAR));
                     deadline_dateDate = calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) +  "/" + calendar.get(Calendar.YEAR);
                 }
-            }, HOUR + 2, MIN, true);
+            }, HOUR, MIN, true);
             timePickerDialog.setTitle("Select Time");
             timePickerDialog.show();
         });
@@ -160,20 +162,14 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 taskMap.put("deadline_date", deadline_dateDate);
                 taskMap.put("deadline_time", deadline_timeTime);
                 taskMap.put("status", 0);
-                taskMap.put("time", FieldValue.serverTimestamp());
+                Date date = new Date();
+                taskMap.put("time", new Timestamp(date));
                 taskMap.put("important", checkBox.isChecked());
                 taskMap.put("address", "");
                 taskMap.put("category", "Any");
                 taskMap.put("keywords", "");
                 taskMap.put("description", "");
                 taskMap.put("tasksBefore", new ArrayList<String>());
-
-                //Get current date&time
-                Date date = new Date();
-                SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
-                taskMap.put("create_date", formatterDate.format(date));
-                SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm");
-                taskMap.put("create_time", formatterTime.format(date));
 
                 //Adding created task
                 firestore.collection(uid).add(taskMap).addOnCompleteListener(task1 -> {

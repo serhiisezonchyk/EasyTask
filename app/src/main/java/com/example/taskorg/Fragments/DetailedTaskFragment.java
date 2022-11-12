@@ -22,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +36,10 @@ public class DetailedTaskFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //Formaters to convert time from Timestamp to string
+        SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm");
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         firestore = FirebaseFirestore.getInstance();
@@ -46,7 +51,7 @@ public class DetailedTaskFragment extends Fragment {
 
         //Create&set percentage to progress bar
         ProgressBar pb = view.findViewById(R.id.progress);
-        pb.setProgress(DateUtil.getPercentTimeLeft(model.getCreate_date(), model.getCreate_time(), model.getDeadline_date(), model.getDeadline_time()));
+        pb.setProgress(DateUtil.getPercentTimeLeft(formatterDate.format(model.getTime()), formatterTime.format(model.getTime()), model.getDeadline_date(), model.getDeadline_time()));
 
         //Initialize buttons
         CheckBox mCheckBoxDet = view.findViewById(R.id.task_checkbox);
@@ -106,7 +111,7 @@ public class DetailedTaskFragment extends Fragment {
         mCategoryTextView.setText(model.getCategory());
 
         //Task creating date settings detailed info fragment
-        mStartDateTextView.setText(model.getCreate_date() + " (" + model.getCreate_time() + ")");
+        mStartDateTextView.setText(formatterDate.format(model.getTime()) + " (" + formatterTime.format(model.getTime()) + ")");
 
         //Task deadline date settings detailed info fragment
         if (model.getDeadline_date().isEmpty() && model.getDeadline_time().isEmpty()) {

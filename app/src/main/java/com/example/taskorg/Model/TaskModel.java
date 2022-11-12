@@ -2,6 +2,7 @@ package com.example.taskorg.Model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TaskModel extends TaskId implements Serializable {
@@ -12,11 +13,15 @@ public class TaskModel extends TaskId implements Serializable {
             address,
             category,
             keywords,
-            description,
-            create_date,
-            create_time;
+            description;
+    private Date time;
     private int status;
     private boolean important;
+
+    public Date getTime() {
+        return time;
+    }
+
     private ArrayList<String> tasksBefore;
 
     public ArrayList<String> getTasksBefore() {
@@ -25,14 +30,6 @@ public class TaskModel extends TaskId implements Serializable {
 
     public void setTasksBefore(ArrayList<String> tasksBefore) {
         this.tasksBefore = tasksBefore;
-    }
-
-    public String getCreate_date() {
-        return create_date;
-    }
-
-    public String getCreate_time() {
-        return create_time;
     }
 
     public String getCategory() {

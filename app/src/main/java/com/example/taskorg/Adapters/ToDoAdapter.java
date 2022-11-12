@@ -24,6 +24,7 @@ import com.example.taskorg.Vars.GlobalVar;
 import com.google.android.gms.common.util.DataUtils;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> {
@@ -154,6 +155,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         //Long click listener on task
         holder.itemView.setOnLongClickListener(view -> {
             Bundle bundle = new Bundle();
+
             bundle.putSerializable("model", model);
             DetailedTaskFragment fragment = DetailedTaskFragment.newInstance(list);
             fragment.setArguments(bundle);
@@ -164,8 +166,11 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             return true;
         });
 
-        if (GlobalVar.listState == false)
-            holder.progressBar.setProgress(DateUtil.getPercentTimeLeft(model.getCreate_date(), model.getCreate_time(), model.getDeadline_date(), model.getDeadline_time()));
+        if (GlobalVar.listState == false) {
+            SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm");
+            holder.progressBar.setProgress(DateUtil.getPercentTimeLeft(formatterDate.format(model.getTime()), formatterTime.format(model.getTime()), model.getDeadline_date(), model.getDeadline_time()));
+        }
 
     }
 
