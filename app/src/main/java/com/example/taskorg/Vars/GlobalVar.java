@@ -6,4 +6,5 @@ import java.util.Arrays;
 
 public class GlobalVar {
     public static boolean listState = true;
+    public static String categoryToShow = "Any";
 }
