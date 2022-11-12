@@ -1,11 +1,13 @@
 package com.example.taskorg.Adapters;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +19,9 @@ import com.example.taskorg.Fragments.DataFragment;
 import com.example.taskorg.Fragments.DetailedTaskFragment;
 import com.example.taskorg.Model.TaskModel;
 import com.example.taskorg.R;
+import com.example.taskorg.Utils.DateUtil;
 import com.example.taskorg.Vars.GlobalVar;
+import com.google.android.gms.common.util.DataUtils;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -160,6 +164,9 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             return true;
         });
 
+        if (GlobalVar.listState == false)
+            holder.progressBar.setProgress(DateUtil.getPercentTimeLeft(model.getCreate_date(), model.getCreate_time(), model.getDeadline_date(), model.getDeadline_time()));
+
     }
 
     private boolean toBoolean(int status) {
@@ -175,12 +182,14 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
 
         TextView mDeadlineDateTv;
         CheckBox mCheckBox;
-
+        ProgressBar progressBar;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mDeadlineDateTv = itemView.findViewById(R.id.deadline_date_date_tv);
             mCheckBox = itemView.findViewById(R.id.mcheckbox);
+            if (GlobalVar.listState == false)
+                progressBar = itemView.findViewById(R.id.progress);
         }
     }
 }
