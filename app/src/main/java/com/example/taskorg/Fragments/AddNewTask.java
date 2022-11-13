@@ -1,17 +1,22 @@
 package com.example.taskorg.Fragments;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +50,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private TextView setDeadlineTime;
     private CheckBox checkBox;
     private EditText mTaskEdit;
+    private ImageButton microButton;
     private String deadline_dateDate = "";
     private String deadline_timeTime = "";
 
@@ -52,6 +58,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private Context context;
     private String uid;
     private final ToDoAdapter adapter;
+
+    private static final int RECOGNIZER_CODE = 1;
 
     public AddNewTask(ToDoAdapter adapter) {
         this.adapter = adapter;
@@ -81,6 +89,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
         checkBox = view.findViewById(R.id.checkboxImportance);
         mTaskEdit = view.findViewById(R.id.task_edittext);
         Button mSaveBtn = view.findViewById(R.id.save_btn);
+        microButton = view.findViewById(R.id.imageButton2);
 
         //Initialize firestore for adding future task
         firestore = FirebaseFirestore.getInstance();
@@ -170,6 +179,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 taskMap.put("keywords", "");
                 taskMap.put("description", "");
                 taskMap.put("tasksBefore", new ArrayList<String>());
+                taskMap.put("archived", false);
 
                 //Adding created task
                 firestore.collection(uid).add(taskMap).addOnCompleteListener(task1 -> {
@@ -187,6 +197,15 @@ public class AddNewTask extends BottomSheetDialogFragment {
             getFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, fragment)
                     .commit();
+        });
+        microButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speek Up");
+                startActivityForResult(intent, RECOGNIZER_CODE);
+            }
         });
     }
 
@@ -206,6 +225,15 @@ public class AddNewTask extends BottomSheetDialogFragment {
         Activity activity = getActivity();
         if (activity instanceof OnDialogCloseListener) {
             ((OnDialogCloseListener) activity).onDialogClose(dialog);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RECOGNIZER_CODE && requestCode == RESULT_OK){
+            ArrayList<String> taskText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            mTaskEdit.setText(taskText.get(0));
         }
     }
 }

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 //Fragment with recycler view
@@ -107,7 +109,28 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener 
                     .commit();
             return true;
         });
+        SearchView searchView = view.findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(!query.isEmpty()){
+                    showDataByText(query);
+                    recyclerView.setAdapter(adapter);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.isEmpty()){
+                    showData();
+                    recyclerView.setAdapter(adapter);
+                    return false;
+                }
+                return true;
+            }
+        });
 
         mList = new ArrayList<>();
 
@@ -129,9 +152,12 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener 
     private void showData() {
         mList.clear();
         if(GlobalVar.categoryToShow.equals("Any"))
-            query = firestore.collection(uid).orderBy("time", Query.Direction.DESCENDING);
+            query = firestore.collection(uid).whereEqualTo("archived", GlobalVar.isArchiveShowing)
+                    .orderBy("time", Query.Direction.DESCENDING);
         else
-            query = firestore.collection(uid).whereEqualTo("category", GlobalVar.categoryToShow).orderBy("time", Query.Direction.DESCENDING);
+            query = firestore.collection(uid).whereEqualTo("archived", GlobalVar.isArchiveShowing)
+                    .whereEqualTo("category", GlobalVar.categoryToShow)
+                    .orderBy("time", Query.Direction.DESCENDING);
         listenerRegistration = query.addSnapshotListener((value, error) -> {
             if (value != null) {
                 for (DocumentChange documentChange : value.getDocumentChanges()) {
@@ -146,6 +172,38 @@ public class ViewListFragment extends Fragment implements OnDialogCloseListener 
             }
         });
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void showDataByText(String key) {
+        mList.clear();
+
+        if(GlobalVar.categoryToShow.equals("Any"))
+            query = firestore.collection(uid).whereEqualTo("archived", GlobalVar.isArchiveShowing)
+                    .orderBy("time", Query.Direction.DESCENDING);
+        else
+            query = firestore.collection(uid).whereEqualTo("archived", GlobalVar.isArchiveShowing)
+                    .whereEqualTo("category", GlobalVar.categoryToShow)
+                    .orderBy("time", Query.Direction.DESCENDING);
+
+        listenerRegistration = query.addSnapshotListener((value, error) -> {
+            if (value != null) {
+                for (DocumentChange documentChange : value.getDocumentChanges()) {
+                    if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                        String id = documentChange.getDocument().getId();
+                        TaskModel taskModel = documentChange.getDocument().toObject(TaskModel.class).withId(id);
+                        if(isSubstring(key.toLowerCase(), taskModel.getKeywords().toLowerCase())){
+                            mList.add(taskModel);
+                            adapter.notifyDataSetChanged();}
+                    }
+                }
+                listenerRegistration.remove();
+            }
+        });
+    }
+    private static boolean isSubstring(String s, String seq) {
+        return seq.contains(s);
+    }
+
 
     @SuppressLint("NotifyDataSetChanged")
     @Override

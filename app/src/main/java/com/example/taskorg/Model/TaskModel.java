@@ -16,13 +16,20 @@ public class TaskModel extends TaskId implements Serializable {
             description;
     private Date time;
     private int status;
-    private boolean important;
+    private boolean important, archived;
+    private ArrayList<String> tasksBefore;
+
+    public boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
 
     public Date getTime() {
         return time;
     }
-
-    private ArrayList<String> tasksBefore;
 
     public ArrayList<String> getTasksBefore() {
         return tasksBefore;

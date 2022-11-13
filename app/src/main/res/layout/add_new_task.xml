@@ -68,4 +68,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/set_deadline_date_tv" />
 
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/ic_baseline_mic_24"
+        app:layout_constraintBottom_toBottomOf="@+id/task_edittext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/task_edittext" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -254,7 +254,7 @@ public class DataFragment extends Fragment {
                         deadline_dateDate = calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.YEAR);
                     }
                 }
-            }, HOUR + 2, MIN, true);
+            }, HOUR, MIN, true);
             timePickerDialog.setTitle("Select Time");
             timePickerDialog.show();
         });
@@ -311,6 +311,7 @@ public class DataFragment extends Fragment {
                     taskMap.put("keywords", keywordsStr);
                     taskMap.put("description", descriptionStr);
                     taskMap.put("tasksBefore", tasksBeforeStr);
+                    taskMap.put("archived", false);
 
 
                     //Adding created task

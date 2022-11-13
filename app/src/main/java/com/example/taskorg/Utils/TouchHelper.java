@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskorg.Adapters.ToDoAdapter;
 import com.example.taskorg.R;
+import com.example.taskorg.Vars.GlobalVar;
 
 
 public class TouchHelper extends ItemTouchHelper.SimpleCallback {
@@ -34,15 +35,23 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
         final int position = viewHolder.getAdapterPosition();
         if (direction == ItemTouchHelper.RIGHT) {
             AlertDialog.Builder builder = new AlertDialog.Builder(adapter.getContext());
+            if(GlobalVar.isArchiveShowing)
             builder.setMessage("Are You Sure?")
                     .setTitle("Delete Task")
                     .setPositiveButton("Yes", (dialog, which) -> adapter.deleteTask(position)).setNegativeButton("No", (dialog, which) -> adapter.notifyItemChanged(position));
+            else
+                builder.setMessage("Are You Sure?")
+                        .setTitle("Archive task?")
+                        .setPositiveButton("Yes", (dialog, which) -> adapter.deleteTask(position)).setNegativeButton("No", (dialog, which) -> adapter.notifyItemChanged(position));
 
             AlertDialog dialog = builder.create();
             dialog.show();
+            dialog.setCanceledOnTouchOutside(false);
         } else {
-            adapter.editTask(position);
-
+            if(GlobalVar.isArchiveShowing)
+                adapter.unarciveTask(position);
+            else
+                adapter.editTask(position);
         }
     }
 
@@ -57,10 +66,16 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
         int backgroundCornerOffset = 20;
 
         if (dX > 0) {
-            icon = ContextCompat.getDrawable(adapter.getContext(), R.drawable.ic_baseline_delete_24);
+            if (GlobalVar.isArchiveShowing)
+                icon = ContextCompat.getDrawable(adapter.getContext(), R.drawable.ic_baseline_delete_24);
+            else
+                icon = ContextCompat.getDrawable(adapter.getContext(), R.drawable.ic_baseline_archive_24);
             background = new ColorDrawable(Color.RED);
         } else {
-            icon = ContextCompat.getDrawable(adapter.getContext(), R.drawable.ic_baseline_edit_24);
+            if (GlobalVar.isArchiveShowing)
+                icon = ContextCompat.getDrawable(adapter.getContext(), R.drawable.ic_baseline_unarchive_24);
+            else
+                icon = ContextCompat.getDrawable(adapter.getContext(), R.drawable.ic_baseline_edit_24);
             background = new ColorDrawable(ContextCompat.getColor(adapter.getContext(), R.color.colorPrimaryDark));
         }
 

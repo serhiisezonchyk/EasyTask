@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.taskorg.Activities.MainActivity;
 import com.example.taskorg.Fragments.DataFragment;
 import com.example.taskorg.Fragments.DetailedTaskFragment;
+import com.example.taskorg.Fragments.ViewListFragment;
 import com.example.taskorg.Model.TaskModel;
 import com.example.taskorg.R;
 import com.example.taskorg.Utils.DateUtil;
@@ -56,15 +57,34 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
 
     public void deleteTask(int position) {
         TaskModel model = list.get(position);
-        firestore.collection(uid).document(model.TaskId).delete();
-        list.remove(position);
-        notifyItemRemoved(position);
+        if(model.getArchived() == true){
+            firestore.collection(uid).document(model.TaskId).delete();
+            list.remove(position);
+            notifyItemRemoved(position);
+        }else {
+            firestore.collection(uid).document(model.TaskId).update("archived", true);
+            list.get(position).setArchived(true);
+            ViewListFragment fragment = new ViewListFragment();
+            activity.getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.fragmentContainer, fragment)
+                    .commit();
+        }
     }
 
     public Context getContext() {
         return activity;
     }
-
+    public void unarciveTask(int position){
+        TaskModel model = list.get(position);
+        firestore.collection(uid).document(model.TaskId).update("archived", false);
+        list.get(position).setArchived(false);
+        ViewListFragment fragment = new ViewListFragment();
+        activity.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.fragmentContainer, fragment)
+                .commit();
+    }
     public void editTask(int position) {
         //Get current task
         TaskModel model = list.get(position);
@@ -81,6 +101,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         bundle.putString("keywords", model.getKeywords());
         bundle.putString("description", model.getDescription());
         bundle.putStringArrayList("tasksBefore", model.getTasksBefore());
+        bundle.putBoolean("archived", model.getArchived());
 
         //Open Data fragment with info about current task
         DataFragment fragment = DataFragment.newInstance(this, list);

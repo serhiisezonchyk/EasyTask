@@ -8,9 +8,15 @@
         android:orderInCategory="100"
         android:title="@string/log_out"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/action_view_state"
         android:orderInCategory="100"
         android:title="View by cards"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_archive"
+        android:orderInCategory="100"
+        android:title="Go to archive"
         app:showAsAction="never" />
 </menu>
