@@ -1,27 +1,17 @@
 package com.example.taskorg.Utils;
 
+import com.google.firebase.Timestamp;
+
+import org.checkerframework.checker.units.qual.A;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateUtil {
-
-    public static Date addDays(Date date, int days) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DATE, days);
-        return cal.getTime();
-    }
-
-    public static Date addHours(Date date, int hours) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.HOUR_OF_DAY, hours);
-        return cal.getTime();
-    }
-
 
     public static int getPercentTimeLeft(String startDate, String startTime, String endDate, String endTime) {
         if(endDate.isEmpty()&&endTime.isEmpty()){
@@ -55,7 +45,7 @@ public class DateUtil {
         if(!date.isEmpty()){
         int[] D = dateSplitUp(date,true);
         int[] T = dateSplitUp(time,false);
-        Calendar calendarDate = new GregorianCalendar(D[2], D[1], D[0], T[0], T[1]);
+        Calendar calendarDate = new GregorianCalendar(D[2], D[1]-1, D[0], T[0], T[1]);
         return calendarDate.getTime();
         }
         else return null;
@@ -80,5 +70,13 @@ public class DateUtil {
             }
         }
         return intArr;
+    }
+
+    public static ArrayList<Timestamp> listDateToTimestamp(ArrayList<Date> input){
+        ArrayList<Timestamp> output = new ArrayList<>();
+        for (Date date: input) {
+            output.add(new Timestamp(date));
+        }
+        return  output;
     }
 }

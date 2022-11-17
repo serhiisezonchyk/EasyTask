@@ -91,17 +91,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
 
         //Set args
         Bundle bundle = new Bundle();
-        bundle.putString("task", model.getTask());
-        bundle.putString("deadline_date", model.getDeadline_date());
-        bundle.putString("deadline_time", model.getDeadline_time());
-        bundle.putBoolean("important", model.getImportant());
-        bundle.putString("address", model.getAddress());
-        bundle.putString("id", model.TaskId);
-        bundle.putString("category", model.getCategory());
-        bundle.putString("keywords", model.getKeywords());
-        bundle.putString("description", model.getDescription());
-        bundle.putStringArrayList("tasksBefore", model.getTasksBefore());
-        bundle.putBoolean("archived", model.getArchived());
+        bundle.putSerializable("model", model);
 
         //Open Data fragment with info about current task
         DataFragment fragment = DataFragment.newInstance(this, list);

@@ -179,6 +179,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 taskMap.put("keywords", "");
                 taskMap.put("description", "");
                 taskMap.put("tasksBefore", new ArrayList<String>());
+                taskMap.put("remindDate", new ArrayList<Timestamp>());
                 taskMap.put("archived", false);
 
                 //Adding created task

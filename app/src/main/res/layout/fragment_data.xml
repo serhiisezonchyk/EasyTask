@@ -64,15 +64,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/set_deadline_date_tv" />
 
-    <EditText
+    <TextView
         android:id="@+id/remind_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@color/teal_700"
-        android:hint="Write Your Remind Here..."
+        android:hint="Click to add remind date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/checkboxImportance" />
 
@@ -83,6 +84,8 @@
         android:layout_margin="10dp"
         android:backgroundTint="@color/teal_700"
         android:hint="Write Your Address Here ...."
+        android:textSize="20sp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -107,6 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:text="Category"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -130,6 +134,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="@color/teal_700"
+        android:textSize="20sp"
         android:hint="Write Your Keywords Here ...."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -146,6 +151,8 @@
         android:lines="7"
         android:minLines="3"
         android:scrollbars="vertical"
+        android:textSize="20sp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

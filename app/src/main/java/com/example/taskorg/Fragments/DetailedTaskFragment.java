@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -138,8 +139,21 @@ public class DetailedTaskFragment extends Fragment {
             });
         }
 
-        //Task conditions settings detailed info fragment
+        //Remind textView
         StringBuilder sb = new StringBuilder();
+        if (model.getRemindDate().isEmpty())
+            sb.append("Remind dates is not found");
+        else {
+            sb.append("Remind dates:");
+            for (Date date : model.getRemindDate()) {
+                sb.append("\n\t\t\t-" + formatterDate.format(date) + " (" + formatterTime.format(date) + ")");
+            }
+
+        }
+        mRemindTextView.setText(sb.toString());
+
+        //Task conditions settings detailed info fragment
+        sb = new StringBuilder();
         if (model.getTasksBefore().isEmpty())
             sb.append("Tasks that must be complete before this one not found");
         else {

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/teal_700"
+        android:gravity="center"
+        android:text="Dates for remind"
+        android:textColor="#fff"
+        android:textSize="30sp" />
+    <LinearLayout
+        android:id="@+id/addTimeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/title">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date:"
+            android:textColor="@color/teal_700"
+            android:layout_marginTop="8dp"
+            android:textSize="20sp"
+            />
+        <EditText
+            android:id="@+id/set_deadline_date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="8dp"
+            android:maxLength="10"
+            android:inputType="date"
+            android:hint="dd/mm/yyyy"
+            android:textColor="@color/teal_700"
+            android:textSize="20sp"  />
+
+        <EditText
+            android:id="@+id/set_deadline_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:inputType="time"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="8dp"
+            android:hint="HH:mm"
+            android:maxLength="5"
+            android:textColor="@color/teal_700"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/addTimeLayout"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:id="@+id/layoutButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recycler_view"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:background="@color/teal_700"
+            android:text="Cancel"
+            android:textColor="#fff" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#fff" />
+
+        <Button
+            android:id="@+id/yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:background="@color/teal_700"
+            android:text="Done"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/teal_700"
+        android:clickable="true"
+        android:foregroundTint="@color/white"
+        android:src="@drawable/ic_baseline_add_24"
+        android:layout_alignRight="@id/recycler_view"
+        android:layout_alignBottom="@id/recycler_view"/>
+</RelativeLayout>

@@ -1,6 +1,7 @@
 package com.example.taskorg.Model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,15 @@ public class TaskModel extends TaskId implements Serializable {
     private int status;
     private boolean important, archived;
     private ArrayList<String> tasksBefore;
+    private ArrayList<Date> remindDate;
+
+    public ArrayList<Date> getRemindDate() {
+        return remindDate;
+    }
+
+    public void setRemindDate(ArrayList<Date> remindDate) {
+        this.remindDate = remindDate;
+    }
 
     public boolean getArchived() {
         return archived;
