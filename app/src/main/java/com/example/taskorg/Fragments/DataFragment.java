@@ -29,6 +29,7 @@ import com.example.taskorg.Dialogs.TasksDialog;
 import com.example.taskorg.Model.TaskModel;
 import com.example.taskorg.R;
 import com.example.taskorg.Utils.DateUtil;
+import com.example.taskorg.Utils.StringDescriptor;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +43,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DataFragment extends Fragment {
 
@@ -112,7 +115,7 @@ public class DataFragment extends Fragment {
         boolean isUpdate = false;
 
         setRemindDate.setOnClickListener(view13 -> {
-            Date deadline = DateUtil.getDateFromStrings(deadline_dateDate,deadline_timeTime);
+            Date deadline = DateUtil.getDateFromStrings(deadline_dateDate, deadline_timeTime);
             ToDoAdapterReminderDialog dataAdapter = new ToDoAdapterReminderDialog(remindDate, createDate, deadline);
             RemindDialog customDialog = new RemindDialog(getActivity(), dataAdapter);
 
@@ -124,7 +127,7 @@ public class DataFragment extends Fragment {
                 output.append("Remind you at: ");
                 for (Date date : remindDate) {
                     SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy (HH:mm)");
-                    output.append("\n\t\t\t-" +formatterDate.format(date) + " ");
+                    output.append("\n\t\t\t-" + formatterDate.format(date) + " ");
                 }
                 setRemindDate.setText(arr.isEmpty() ? "Click to add remind date" : output);
             });
@@ -181,11 +184,11 @@ public class DataFragment extends Fragment {
             mCategorySpinner.setSelection(Arrays.asList(getResources().getStringArray(R.array.categories)).indexOf(categoryStr));
             mKeywordsEdit.setText(keywordsStr);
             mDescriptionEdit.setText(descriptionStr);
-            if(!deadline_dateDate.isEmpty())
+            if (!deadline_dateDate.isEmpty())
                 setDeadlineDate.setText(deadline_dateDate);
             else
                 setDeadlineDate.setText("Deadline Date");
-            if(!deadline_timeTime.isEmpty())
+            if (!deadline_timeTime.isEmpty())
                 setDeadlineTime.setText(deadline_timeTime);
             else
                 setDeadlineTime.setText("Deadline Time");
@@ -199,7 +202,7 @@ public class DataFragment extends Fragment {
                     for (TaskModel model : mList) {
                         if (key.equals(model.getId())) {
                             tasksBefore.add(model);
-                            sb.append("\n\t\t\t-" +model.getTask() + " ");
+                            sb.append("\n\t\t\t-" + model.getTask() + " ");
                             counter++;
                         }
                     }
@@ -212,29 +215,13 @@ public class DataFragment extends Fragment {
             if (!remindDate.isEmpty())
                 for (Date date : remindDate) {
                     SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy (HH:mm)");
-                    sb.append("\n\t\t\t-" +formatterDate.format(date) + " ");
+                    sb.append("\n\t\t\t-" + formatterDate.format(date) + " ");
                     counter++;
                 }
 
             setRemindDate.setText(counter == 0 ? "Click to add remind date" : sb.toString());
         }
 
-        mDescriptionEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
 
         //Deadline date click listener. Opens calendar
         setDeadlineDate.setOnClickListener(v -> {
@@ -303,6 +290,33 @@ public class DataFragment extends Fragment {
             timePickerDialog.show();
         });
 
+
+        //Count description string button
+        Button countButton = view.findViewById(R.id.count_btn);
+        countButton.setOnClickListener(view14 -> {
+            int start = 0;
+            StringBuilder sb = new StringBuilder();
+            String decription = mDescriptionEdit.getText().toString();
+            //Get all #count<func>
+            Matcher matcher = Pattern.compile("\\#count<(?:([^#>]+))\\>").matcher(decription);
+            if (matcher.find()) {
+                do {
+                    sb.append(decription.substring(start, matcher.end()));
+                    start = matcher.end();
+                    //get func from #count<func>
+                    Matcher matcher2 = Pattern.compile("(?<=#count<)([\\s\\S]+?)(?=>)").matcher(matcher.group());
+                    while (matcher2.find()) {
+                        String input = matcher2.group();
+                        String output = StringDescriptor.getStringMathAnswer(input);
+                        sb.append("(" + output + ")");
+                    }
+                } while (matcher.find());
+                sb.append(decription.substring(start));
+                mDescriptionEdit.setText("");
+                mDescriptionEdit.setText(sb.toString());
+            }else
+                Toast.makeText(context, "Nothing to count", Toast.LENGTH_SHORT).show();
+        });
 
         boolean finalIsUpdate = isUpdate;
 
